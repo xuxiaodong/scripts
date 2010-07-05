@@ -1,0 +1,3 @@
+#!/bin/bash
+
+/usr/bin/rsync -avl --delete --stats --progress --exclude 'wp-content/cache/*' -e ssh www@IP:/home/www/linuxtoy.org/public /home/xiaodong/sites/linuxtoy.org/

@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# I3 statusbar
+# Author: Xu Xiaodong  <xxdlhy AT gmail.com>, 2009
+#
+
+# font
+FNT='-xos4-terminus-medium-r-normal--12-120-72-72-c-60-iso8859-1'
+# background
+BG='#000000'
+# forground
+FG='#999999'
+# x
+XPOS=580
+# y
+YPOS=884
+# height
+DH=16
+# alignment
+DA=r
+
+conky | dzen2 -bg $BG -fg $FG -x $XPOS -y $YPOS -ta $DA -h $DH -p -e '' -fn $FNT

@@ -1,0 +1,26 @@
+#!/usr/bin/env perl
+#
+# Clean CHM file
+# Xu Xiaodong <xxdlhy@gmail.com>, 2010
+#
+
+use strict;
+use warnings;
+
+my $number = shift;
+my $string = shift;
+
+my @files = glob "*.html";
+for (@files) {
+    my $filename = $_;
+    $filename =~ s/^($number)?($string)?//;
+    rename $_, $filename;
+}
+
+if ( defined $ARGV[2] ) {
+    $^I = "";
+    while (<>) {
+        s/($number)?($string)?//g;
+        print;
+    }
+}

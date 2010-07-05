@@ -1,0 +1,52 @@
+#!/usr/bin/env perl
+#
+# Copyright (C) 2010 Xiaodong Xu <xxdlhy@gmail.com>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+
+use 5.012;
+use warnings;
+
+use LWP::Simple qw(get);
+use URI::Escape qw(uri_escape);
+
+sub usage {
+    ( my $me = $0 ) =~ s{.*/}{};
+    die "Usage: $me <word>\n";
+}
+
+sub define {
+    my $word    = shift;
+    my $url     = "http://dict.hjenglish.com/app/w/" . uri_escape($word);
+    my $content = get($url);
+
+    die "Couldn't open $url" unless defined $content;
+
+    if ( $content =~ m{comment">(.*?)</div} ) {
+        ( $word = $1 ) =~ s{<br/?>}{\n}g;
+        binmode STDOUT, ":utf8";
+        say "$word";
+    }
+    else {
+        say "Not found";
+    }
+}
+
+if ( $#ARGV != 0 ) {
+    usage();
+}
+else {
+    define( $ARGV[0] );
+}
