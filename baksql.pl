@@ -21,21 +21,47 @@
 use strict;
 use warnings;
 
-my $user = '';
-my $pass = '';
 
-my $cwd     = '';
-my $db_name = '';
+our $cwd = '';
 
-chomp( my $date = `date +%Y%m%d%H%M%S` );
-my $sql_name = $date . '.sql';
-my $bak_name = $sql_name . '.tar.gz';
 
-my $bak_cmd =
-    "mysqldump --add-drop-table --user=$user --password=$pass $db_name > $sql_name";
-my $tar_cmd = "tar czf $bak_name $sql_name";
+sub backup_sql {
+    my $user = '';
+    my $pass = '';
 
-chdir $cwd;
-system $bak_cmd;
-system $tar_cmd;
-unlink $sql_name;
+    my $db_name = '';
+    chomp( my $date = `date +%Y%m%d%H%M%S` );
+    my $sql_name = $date . '.sql';
+    my $bak_name = $sql_name . '.tar.gz';
+
+    my $bak_cmd
+        = "mysqldump --add-drop-table --user=$user --password=$pass $db_name > $sql_name";
+    my $tar_cmd = "tar czf $bak_name $sql_name";
+
+    chdir $cwd;
+    system $bak_cmd;
+    system $tar_cmd;
+    unlink $sql_name;
+}
+
+
+sub delete_tar {
+    chdir $cwd;
+
+    opendir my ($dir_fh), $cwd or die "Can't open $cwd: $!\n";
+    my @files = grep {/\.tar.gz$/} readdir $dir_fh;
+    closedir $dir_fh;
+
+    for my $file (@files) {
+        unlink $file if -M $file > 5;
+    }
+}
+
+
+sub run {
+    backup_sql();
+    delete_tar();
+}
+
+
+run() unless caller;
